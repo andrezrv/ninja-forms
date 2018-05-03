@@ -686,6 +686,24 @@ if( get_option( 'ninja_forms_load_deprecated', FALSE ) && ! ( isset( $_POST[ 'nf
          */
 
         /**
+	     * Obtain all possible template paths.
+	     * 
+	     * @return mixed|null|array
+	     */
+        public static function get_template_paths() {
+        	static $template_paths = null;
+
+        	if ( is_null( $template_paths ) ) {
+		        $template_paths = apply_filters( 'ninja_forms_template_file_paths', array(
+				        self::$dir . 'includes/Templates/',
+			        )
+		        );
+	        }
+
+        	return $template_paths;
+        }
+
+        /**
          * Template
          *
          * @param string $file_name
@@ -697,13 +715,22 @@ if( get_option( 'ninja_forms_load_deprecated', FALSE ) && ! ( isset( $_POST[ 'nf
 
             extract( $data );
 
-            $path = self::$dir . 'includes/Templates/' . $file_name;
+	        $file_path = '';
 
-            if( ! file_exists( $path ) ) return FALSE;
+            foreach ( self::get_template_paths() as $path ) {
+            	if ( ! file_exists( $path . $file_name ) ) {
+            		continue;
+	            }
 
-            if( $return ) return file_get_contents( $path );
+	            $file_path = $path . $file_name;
+            	break;
+            }
 
-            include $path;
+            if( ! file_exists( $file_path ) ) return FALSE;
+
+            if( $return ) return file_get_contents( $file_path );
+
+            include $file_path;
         }
 
         /**
