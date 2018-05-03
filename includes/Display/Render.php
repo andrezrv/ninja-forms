@@ -631,7 +631,7 @@ final class NF_Display_Render
             get_stylesheet_directory() . '/ninja-forms/templates/',
         ));
 
-        $file_paths[] = Ninja_Forms::$dir . 'includes/Templates/';
+        $file_paths = array_merge( $file_paths, Ninja_Forms::get_template_paths() );
 
         // Search for and Output File Templates
         foreach( self::$loaded_templates as $file_name ) {
